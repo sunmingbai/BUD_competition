@@ -30,16 +30,17 @@ commercialplanning=pd.read_csv("E:\工作\百威\(Replace)Commercial Planning.cs
 calendar=pd.read_csv("C:/Users/mings/BUD/rearranged_sale.csv")
 
 
-# In[13]:
-
-
-historicalsale
-
-
 # In[14]:
 
 
 historicalsale['Date']=historicalsale['Date'].apply(lambda x: datetime.strptime(x,'%Y/%m/%d'))
+
+
+# In[23]:
+
+
+historicalsale.set_index('Date',inplace=True)
+historicalsale
 
 
 # In[15]:
@@ -54,23 +55,65 @@ masterdata
 commercialplanning
 
 
-# In[19]:
+# In[50]:
 
 
 # load temperature
+Htem=pd.read_csv("E:\工作\百威\Data\HWeather_t.csv")
+Jtem=pd.read_csv("E:\工作\百威\Data\JWeather_t.csv")
+#Htem.info()
+Htem
 
 
-# In[17]:
+# In[51]:
+
+
+Htem['Temp_max']=Htem['Temp_max'].map(lambda x: re.match('(.*)℃',x)[1])
+Htem['Temp_max']=Htem['Temp_max'].astype(int)
+Htem['Temp_min']=Htem['Temp_min'].map(lambda x: re.match('(.*)℃',x)[1])
+Htem['Temp_min']=Htem['Temp_min'].astype(int)
+
+
+# In[52]:
+
+
+Htem['Date']=Htem['Date'].apply(lambda x: datetime.strptime(x,'%Y-%m-%d'))
+
+
+# In[53]:
+
+
+Htem.info()
+
+
+# In[54]:
+
+
+Jtem['Temp_min']=Jtem['Temp_min'].map(lambda x: re.match('(.*)℃',x)[1])
+Jtem['Temp_max']=Jtem['Temp_max'].map(lambda x: re.match('(.*)℃',x)[1])
+Jtem['Temp_max']=Jtem['Temp_max'].astype(int)
+Jtem['Temp_min']=Jtem['Temp_min'].astype(int)
+Jtem['Date']=Jtem['Date'].apply(lambda x: datetime.strptime(x,'%Y-%m-%d'))
+
+
+# In[55]:
+
+
+Htem.info()
+
+
+# In[24]:
 
 
 def createdataset(totalset, historicalsale, masterdata, planning, rolling, lagging):
+    totalset.index=historicalsale.index
     totalset[['Year','Month','SalesRegion','SKU Code']]=historicalsale[['Year','Month','SalesRegion','SKU Code']]
-    totalset['Weekday']=historicalsale['Date'].map(lambda x:x.weekday())
+    totalset['Weekday']=totalset.index.map(lambda x:x.weekday())
     # add temperaature and other time series related features
-    # temperature
+    # temperature corresponding to date and region
 
 
-# In[18]:
+# In[25]:
 
 
 totalset=pd.DataFrame(index=range(len(historicalsale)))
