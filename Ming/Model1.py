@@ -208,10 +208,47 @@ calendardroped['Sporting']=0
 calendardroped.info()
 
 
-# In[132]:
+# In[399]:
 
 
-def createdataset(totalset, historicalsale, masterdata, planning, Twotemps, rolling, lagging):
+HECPI=pd.read_csv("E:\工作\百威\Data\HCPI_E_t.csv")
+JECPI=pd.read_csv("E:\工作\百威\Data\JCPI_E_t.csv")
+JECPI.info()
+
+
+# In[400]:
+
+
+def transcpi(tarset,region):
+    try:
+        tarset['Date']=tarset['Date'].apply(lambda x: datetime.strptime(x,'%Y/%m/%d'))
+    except:
+        print('Already Datetime')
+    tarset['Year']=tarset['Date'].map(lambda x: x.year)
+    tarset['Month']=tarset['Date'].map(lambda x: x.month)
+    tarset['SalesRegion']=region
+    tarset.drop(columns=['Date'],inplace=True)
+    return tarset
+
+
+# In[401]:
+
+
+HECPIT=transcpi(HECPI,'Heilongjiang')
+JECPIT=transcpi(JECPI,'Jilin')
+CPIT=HECPIT.append(JECPIT)
+
+
+# In[402]:
+
+
+CPIT
+
+
+# In[403]:
+
+
+def createdataset(totalset, historicalsale, masterdata, planning, Twotemps,CPIT, rolling, lagging):
     totalset.index=historicalsale.index
     totalset[['Year','Month','SalesRegion','SKU Code','VolumeHL']]=historicalsale[['Year','Month','SalesRegion','SKU Code','VolumeHL']]
     totalset['Weekday']=totalset.index.map(lambda x:x.weekday())
@@ -221,14 +258,15 @@ def createdataset(totalset, historicalsale, masterdata, planning, Twotemps, roll
     # set  event lagging use this function
     callabeled=labelevent([20,20,20],['National','Cultural','Sporting'],calendardroped)
     totalset=pd.merge(totalset,callabeled,how='left',on=['Date'])
+    totalset=pd.merge(totalset,CPIT,how='left',on=['Year','Month','SalesRegion'])
     return totalset
 
 
-# In[133]:
+# In[419]:
 
 
 totalset=pd.DataFrame(index=range(len(historicalsale)))
-createdataset(totalset, historicalsale, masterdata, commercialplanning,Twotemps ,5, 6)
+totalset=createdataset(totalset, historicalsale, masterdata, commercialplanning,Twotemps ,CPIT,5, 6)
 
 
 # In[128]:
@@ -253,13 +291,19 @@ from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import RepeatedStratifiedKFold
 
 
-# In[148]:
+# In[420]:
+
+
+totalset
+
+
+# In[423]:
 
 
 totalsetr=totalset.replace({'SalesRegion':{'Heilongjiang':1,'Jilin':2}})
 
 
-# In[149]:
+# In[424]:
 
 
 xcols=[]
@@ -269,62 +313,60 @@ for col in totalset.columns:
 xcols
 
 
-# In[150]:
+# In[425]:
 
 
 X=totalsetr[xcols]
 y=totalsetr['VolumeHL']
 
 
-# In[157]:
+# In[426]:
 
 
 X.info()
 
 
-# In[158]:
+# In[427]:
 
 
 model=XGBRegressor()
 cv= RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
 
 
-# In[170]:
+# In[489]:
 
 
 def wmape( y_true,y_pre):
-    aerror=[np.abs(y_pre[i]-y_true[i]) for i in range(len(y_pre))]
+    y_true=pd.Series(y_true)
+    y_pre=pd.Series(y_pre)
+    try :
+        len( y_true)==len(y_pre)
+    except:
+        print('Length is not equal')
+    aerror=[np.abs(y_pre.iloc[i]-y_true.iloc[i]) for i in range(len(y_pre))]
     return np.sum(aerror)/np.sum(y_true)
 
 
-# In[173]:
+# In[462]:
 
 
 from sklearn.metrics import make_scorer
 
 
-# In[174]:
-
-
-scores = cross_val_score(model, X, y, scoring=make_scorer(wmape, greater_is_better=False), cv=cv, n_jobs=-1)
-# summarize performance
-print('Mean wMAPE: %.5f' % mean(scores))
-
-
-# In[179]:
+# In[430]:
 
 
 from sklearn.model_selection import train_test_split
 import xgboost  as xgb
 
 
-# In[195]:
+# In[431]:
 
 
 totalsetr
 
 
-# In[196]:
+# In[432]:
 
 
 totalseth=totalsetr[totalsetr['SalesRegion']==1]
@@ -332,15 +374,7 @@ totalseth1=totalseth[totalseth['SKU Code']==1]
 totalseth1
 
 
-# In[201]:
-
-
-X=totalseth1[xcols]
-y=totalseth1['VolumeHL']
-X
-
-
-# In[357]:
+# In[433]:
 
 
 def trainingset(finalset):
@@ -349,13 +383,13 @@ def trainingset(finalset):
     return X,y
 
 
-# In[361]:
+# In[493]:
 
 
 X,y=trainingset(totalsetr)
 
 
-# In[362]:
+# In[494]:
 
 
 X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.1,
@@ -363,14 +397,14 @@ X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.1,
                                                     random_state=1)
 
 
-# In[363]:
+# In[495]:
 
 
 dtrain = xgb.DMatrix(X_train, label=y_train)
 xtest = xgb.DMatrix(X_test)
 
 
-# In[364]:
+# In[496]:
 
 
 param = { 'eta': 0.3, 'silent': 1, 'objective':'reg:linear'}
@@ -403,41 +437,47 @@ result = xgb.cv(param, dtrain, num_round, num_fold)
 print(result)
 
 
-# In[366]:
+# In[497]:
 
 
 import xgboost as xgb
 
 
-# In[367]:
+# In[498]:
 
 
 bstr = xgb.XGBRegressor(**param)
 bstr.fit(X_train,y_train)
 
 
-# In[368]:
+# In[499]:
 
 
 xgb_pre=bstr.predict(X_test)
 
 
-# In[369]:
+# In[500]:
 
 
 wmape(y_test,xgb_pre)
 
 
-# In[370]:
+# In[501]:
 
 
 y_test
 
 
-# In[371]:
+# In[502]:
 
 
 xgb_pre
+
+
+# In[481]:
+
+
+#下一步 研究思路 添加更多特征
 
 
 # In[ ]:
