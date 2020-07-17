@@ -1,6 +1,8 @@
 ## XGboost
+
 **特征**
 时间特征
+
 **参数列表**
 XGBRegressor(alpha=0, base_score=0.5, booster='gbtree', colsample_bylevel=1,
              colsample_bynode=1, colsample_bytree=1, eta=0.3,
@@ -10,6 +12,7 @@ XGBRegressor(alpha=0, base_score=0.5, booster='gbtree', colsample_bylevel=1,
              nthread=None, objective='reg:linear', random_state=0, reg_alpha=0,
              reg_lambda=1, scale_pos_weight=1, seed=100, silent=1, subsample=1,
              verbosity=1)
+
 **效果**
 1. 合并SKU Code wmape=0.55
 2. 单独SKU Code wmape=0.47
