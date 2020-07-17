@@ -1,4 +1,6 @@
-## XGboost
+# XGboost
+
+## 只包含简单时间特征
 
 **特征**
 时间特征
@@ -16,3 +18,15 @@ XGBRegressor(alpha=0, base_score=0.5, booster='gbtree', colsample_bylevel=1,
 **效果**
 1. 合并SKU Code wmape=0.55
 2. 单独SKU Code wmape=0.47
+
+## 包含更多时间特征
+
+**特征**
+补充CPI等时间特征，模型表现变好
+
+**参数列表**
+同上
+
+**效果**
+1. 合并SKU Code wmape=0.55
+2. 单独SKU Code wmape=0.42
