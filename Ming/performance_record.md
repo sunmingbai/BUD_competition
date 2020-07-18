@@ -35,3 +35,8 @@ XGBRegressor(alpha=0, base_score=0.5, booster='gbtree', colsample_bylevel=1,
 
 ## + 历史同期数据特征（同比）
 !(https://github.com/sunmingbai/BUD_compete/blob/master/version3%20put.png)
+
+## 引入销量rolling特征
+all sku: drop to 0.48
+https://github.com/sunmingbai/BUD_competition/blob/master/Ming/version%204%20output.png
+single sku: increase to  0.48
