@@ -30,3 +30,8 @@ XGBRegressor(alpha=0, base_score=0.5, booster='gbtree', colsample_bylevel=1,
 **效果**
 1. 合并SKU Code wmape=0.55
 2. 单独SKU Code wmape=0.42
+
+## 引入CPI与Temp的指数平滑特征（平滑后按月错位）（环比）
+
+## + 历史同期数据特征（同比）
+!(https://github.com/sunmingbai/BUD_compete/blob/master/version3%20put.png)
