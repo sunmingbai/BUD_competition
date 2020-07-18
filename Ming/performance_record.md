@@ -40,3 +40,25 @@ XGBRegressor(alpha=0, base_score=0.5, booster='gbtree', colsample_bylevel=1,
 all sku: drop to 0.48
 https://github.com/sunmingbai/BUD_competition/blob/master/Ming/version%204%20output.png
 single sku: increase to  0.48
+
+
+# STL+ETS
+
+## 利用2016年1月到2018年11月的数据，预测2019年1月
+
+wmape=0.2464219
+stlf(s, 
+     h=horizon,#预测多久 
+     s.window=3, 
+     method='ets',
+     ic='bic', 
+     opt.crit='mae')
+     
+# STL+ARIMA
+## 利用2016年1月到2018年11月的数据，预测2019年1月
+wmape=0.5920622
+stlf(s, 
+     h=horizon, #预测多久
+     s.window=3, 
+     method='arima',
+     ic='bic')
