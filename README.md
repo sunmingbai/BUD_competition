@@ -1,6 +1,6 @@
-# BUD_competition
+# **BUD_competition**
 
-# 0718
+# **0718**
 
 # XGboost
 
@@ -67,7 +67,7 @@ stlf(s,
      method='arima',
      ic='bic')
      
-# 0719
+# **0719**
 
 # XGBoost
 
