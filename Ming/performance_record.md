@@ -30,3 +30,35 @@ XGBRegressor(alpha=0, base_score=0.5, booster='gbtree', colsample_bylevel=1,
 **效果**
 1. 合并SKU Code wmape=0.55
 2. 单独SKU Code wmape=0.42
+
+## 引入CPI与Temp的指数平滑特征（平滑后按月错位）（环比）
+
+## + 历史同期数据特征（同比）
+!(https://github.com/sunmingbai/BUD_compete/blob/master/version3%20put.png)
+
+## 引入销量rolling特征
+all sku: drop to 0.48
+https://github.com/sunmingbai/BUD_competition/blob/master/Ming/version%204%20output.png
+single sku: increase to  0.48
+
+
+# STL+ETS
+
+## 利用2016年1月到2018年11月的数据，预测2019年1月
+
+wmape=0.2464219
+stlf(s, 
+     h=horizon,#预测多久 
+     s.window=3, 
+     method='ets',
+     ic='bic', 
+     opt.crit='mae')
+     
+# STL+ARIMA
+## 利用2016年1月到2018年11月的数据，预测2019年1月
+wmape=0.5920622
+stlf(s, 
+     h=horizon, #预测多久
+     s.window=3, 
+     method='arima',
+     ic='bic')
