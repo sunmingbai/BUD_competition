@@ -73,3 +73,14 @@ stlf(s,
 
 ## modeling with monthly data
 wmape=0.27
+
+
+
+# TimeLine
+
+7/22 8：00之前 给出模型的效果（by sku）
+7/22 12:00之前 选出不同sku最佳模型
+7/22 15:00之前 开始做PPT
+7/22 24:00之前 做完PPT初稿
+
+
